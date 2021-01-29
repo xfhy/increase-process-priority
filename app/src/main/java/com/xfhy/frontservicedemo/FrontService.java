@@ -97,7 +97,7 @@ public class FrontService extends Service {
 
         createChannel();
 
-        RemoteViews remoteViewTemplate = new RemoteViews(getPackageName(), R.layout.layout_test);
+        RemoteViews remoteViewTemplate = new RemoteViews(getPackageName(), /*R.layout.layout_test*/4);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setOngoing(true);

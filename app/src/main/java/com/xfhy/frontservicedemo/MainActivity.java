@@ -91,17 +91,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
-        Handler handler = new Handler(Looper.myLooper());
+        Log.d("xfhy666","开始startService()");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+
+        /*Handler handler = new Handler(Looper.myLooper());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("xfhy666","开始startService()");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent);
-                } else {
-                    startService(intent);
-                }
+
             }
-        }, 10 * 1000);
+        }, 10 * 1000);*/
     }
 }
+//测试时App在前台弹出Service，然后home到桌面，此时看它的状态
+//方案A ： 正常展示通知的方式启动Service
+//方案B ： 展示通知时，使用一个没有注册的channel
+//方案C ： 展示通知时，使用一个错误的布局
+//华为 Android 8.0.0 ,EMUI 8.0.0, 方案A :  oom cur=200，方案B :  oom cur=200,方案C :  崩溃
+//小米8 Android 10，MIUI 12,方案A :  oom cur=50，方案B :  oom cur=700，方案C :  崩溃
+//小米6 Android 8，MIUI 10,方案A :  oom cur=200，方案B :  oom cur=200，方案C :  崩溃
+//vivo nex Android 10,Funtouch OS 9.2,方案A :  adj=0,方案B :  adj=7,方案C :  adj=0
+//原生Android 9，方案A :  adj=3，方案B : adj=11，方案C : adj=3
