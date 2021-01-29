@@ -116,3 +116,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //小米6 Android 8，MIUI 10,方案A :  oom cur=200，方案B :  oom cur=200，方案C :  200
 //vivo nex Android 10,Funtouch OS 9.2,方案A :  adj=0,方案B :  adj=7,方案C :  adj=0
 //原生Android 9，方案A :  adj=3，方案B : adj=11，方案C : adj=3
+//三星 Galaxy A60,Android 10,补丁级别： 2020.12，方案B和C都会崩溃

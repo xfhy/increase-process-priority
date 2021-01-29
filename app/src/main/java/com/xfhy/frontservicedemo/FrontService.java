@@ -39,8 +39,8 @@ public class FrontService extends Service {
                     Log.d("xfhy666", "线程运行中..." + System.currentTimeMillis());
                     try {
                         Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        //e.printStackTrace();
                     }
                 }
             }
@@ -51,7 +51,9 @@ public class FrontService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        if (intent == null) {
+            return super.onStartCommand(null, flags, startId);
+        }
         int show = intent.getIntExtra("show", 1);
         if (show == 1) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
