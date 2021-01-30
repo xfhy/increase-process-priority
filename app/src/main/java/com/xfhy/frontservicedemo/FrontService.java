@@ -16,8 +16,8 @@ import androidx.core.app.NotificationCompat;
 
 public class FrontService extends Service {
 
-    String CHANNEL_ID = "demo_channel";
-    String CHANNEL_ERROR_ID = "demo_channel_error";
+    private static final String CHANNEL_ID = "demo_channel";
+    private static final String CHANNEL_ERROR_ID = "demo_channel_error";
 
     Thread thread;
 
@@ -110,6 +110,7 @@ public class FrontService extends Service {
         try {
             startForeground(1, builder.build());
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -130,13 +131,13 @@ public class FrontService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createChannel() {
-
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        NotificationChannel Channel = new NotificationChannel(CHANNEL_ID, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, getString(R.string.app_name),
+                NotificationManager.IMPORTANCE_HIGH);
         //设置锁屏可见 VISIBILITY_PUBLIC=可见
-        Channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         if (manager != null) {
-            manager.createNotificationChannel(Channel);
+            manager.createNotificationChannel(channel);
         }
     }
 

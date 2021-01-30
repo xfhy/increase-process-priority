@@ -29,20 +29,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 hook();
             }
         });
+        findViewById(R.id.btn_loop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loop();
+            }
+        });
         findViewById(R.id.btn_show_normal).setOnClickListener(this);
         findViewById(R.id.btn_error_channel).setOnClickListener(this);
         findViewById(R.id.btn_error_layout).setOnClickListener(this);
     }
 
+    private void loop() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Looper.loop();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
     private void hook() {
         try {
-            //todo xfhy ActivityThread在哪里赋值的？
+            //ActivityThread的sCurrentActivityThread在哪里赋值的？
+            //答：main()->attach()中，它是全局单例。
 
-            //拿ActivityThread实例
-            Class<?> aClass = Class.forName("android.app.ActivityThread");
-            Field sCurrentActivityThread = aClass.getDeclaredField("sCurrentActivityThread");
+            //拿ActivityThread的class对象
+            Class<?> activityThreadClazz = Class.forName("android.app.ActivityThread");
+            Field sCurrentActivityThread = activityThreadClazz.getDeclaredField("sCurrentActivityThread");
             sCurrentActivityThread.setAccessible(true);
-            Object activityThread = sCurrentActivityThread.get(aClass);
+            Object activityThread = sCurrentActivityThread.get(activityThreadClazz);
 
             //拿到SCHEDULE_CRASH的值
             Class<?> HClass = Class.forName("android.app.ActivityThread$H");
@@ -51,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             final int whatForScheduleCrash = scheduleCrashField.getInt(HClass);
 
             //拿mH实例
-            Field mHField = aClass.getDeclaredField("mH");
+            Field mHField = activityThreadClazz.getDeclaredField("mH");
             mHField.setAccessible(true);
             Handler mH = (Handler) mHField.get(activityThread);   //activityThread  实例
 
@@ -97,14 +119,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             startService(intent);
         }
-
-        /*Handler handler = new Handler(Looper.myLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 10 * 1000);*/
     }
 }
 //测试时App在前台弹出Service，然后home到桌面，此时看它的状态
@@ -112,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //方案B ： 展示通知时，使用一个没有注册的channel
 //方案C ： 展示通知时，使用一个错误的布局
 //华为 Android 8.0.0 ,EMUI 8.0.0, 方案A :  oom cur=200，方案B :  oom cur=200,方案C :  200
-//小米8（打了2020.9的补丁） Android 10，MIUI 12,方案A :  oom cur=50，方案B :  oom cur=700，方案C :  5秒后崩溃
+//小米8（打了2020.9的补丁） Android 10，MIUI 12,方案A :  oom cur=50，方案B :  5秒后崩溃 ，方案C :  5秒后崩溃
 //小米6 Android 8，MIUI 10,方案A :  oom cur=200，方案B :  oom cur=200，方案C :  200
 //vivo nex Android 10,Funtouch OS 9.2,方案A :  adj=0,方案B :  adj=7,方案C :  adj=0
 //原生Android 9，方案A :  adj=3，方案B : adj=11，方案C : adj=3
